@@ -1,0 +1,11 @@
+<aura:component implements="flexipage:availableForAllPageTypes">
+    <div class="slds-grid">
+        <div class="slds-col slds-size_7-of-12">
+            <c:PackageSend/>
+        </div>
+        <div class="slds-col slds-size_5-of-12">
+            <c:PackageSendSummary/>
+        </div>
+    </div>
+
+</aura:component>

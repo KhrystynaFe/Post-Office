@@ -1,0 +1,47 @@
+<aura:component controller="PackageSendSummaryController">
+    
+    <aura:attribute name="newPackages" type="List"/>
+    <aura:attribute name="TotalNumberOfPackages" type="Integer"/>
+    <aura:attribute name ="TotalPrice" type="Double"/>
+    <aura:attribute name ="TotalWeight" type = "Integer"/>
+    <aura:attribute name ="TotalSize" type="Integer"/>
+    <aura:attribute name ="TotalDistance" type="Double"/>
+
+    <aura:handler event="c:ApplicationEvent" action="{!c.HandleAppEvent}"/>
+    <div class="container">
+    <div class="slds-grid slds-p-top_large">
+        <div class="slds-col slds-size_1-of-5">
+            <div class="slds-box slds-text-align_center slds-box_small slds-m-around_medium" style="background-color: #ffffff;">Packages</div>
+        </div>
+        <div class="slds-col slds-size_1-of-5">
+            <div class="slds-box slds-text-align_center slds-box_small slds-m-around_medium" style="background-color: #ffffff;">Total price</div>
+        </div>
+        <div class="slds-col slds-size_1-of-5">
+            <div class="slds-box slds-text-align_center slds-box_small slds-m-around_medium" style="background-color: #ffffff;">Total Weight</div>
+        </div>
+        <div class="slds-col slds-size_1-of-5">
+            <div class="slds-box slds-text-align_center slds-box_small slds-m-around_medium" style="background-color: #ffffff;">Total Size</div>
+        </div>
+        <div class="slds-col slds-size_1-of-5">
+            <div class="slds-box slds-text-align_center slds-box_small slds-m-around_medium" style="background-color: #ffffff;">Total Distance</div>
+        </div>
+    </div>
+    <div class="slds-grid slds-p-top_large">
+            <div class="slds-col slds-size_1-of-5">
+                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalNumberOfPackages}</div>
+            </div>
+            <div class="slds-col slds-size_1-of-5">
+                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalPrice}</div>
+            </div>
+            <div class="slds-col slds-size_1-of-5">
+                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalWeight}</div>
+            </div>
+            <div class="slds-col slds-size_1-of-5">
+                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalSize}</div>
+            </div>
+            <div class="slds-col slds-size_1-of-5">
+                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalDistance}</div>
+            </div>
+    </div>
+    </div>
+</aura:component>
