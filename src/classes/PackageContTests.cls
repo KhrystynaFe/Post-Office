@@ -1,17 +1,19 @@
-@isTest
+@IsTest
 private class PackageContTests {
-    @isTest static void getPostOfficesTest() {
-        insert new Post_Office__c(Name = '0');
+    @IsTest static void getPostOfficesTest() {
+        String expectedNameOfPostOffice = '0';
+        insert new Post_Office__c(Name = expectedNameOfPostOffice);
+        Integer expectedNumberOfPostOffices = 1;
 
         Test.startTest();
         List<Post_Office__c> result = PackageCont.getPostOffices();
         Test.stopTest();
 
-        System.assertEquals(1, result.size());
-        System.assertEquals('0', result[0].Name);
+        System.assertEquals(expectedNumberOfPostOffices, result.size());
+        System.assertEquals(expectedNameOfPostOffice, result[0].Name);
     }
 
-    @isTest static void TestPickListValues() {
+    @IsTest static void TestPickListValues() {
         Map<String, List<PackageCont.PickListOption>> result = new Map<String, List<PackageCont.PickListOption>>();
         Test.startTest();
         result = (Map<String, List<PackageCont.PickListOption>>) JSON.deserialize(PackageCont.getPickListValue(), Map<String, List<PackageCont.PickListOption>>.class);
