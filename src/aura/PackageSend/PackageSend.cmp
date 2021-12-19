@@ -1,0 +1,100 @@
+<aura:component controller="PackageCont">
+    <aura:registerEvent name="PackageRefreshEvent" type="c:ApplicationEvent"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+
+    <aura:attribute name="newPackages" type="Package__c[]"/>
+    <aura:attribute name="PickListSize" type="List"/>
+    <aura:attribute name="PickListWeight" type="List"/>
+    <aura:attribute name="PickListType" type="List"/>
+    <aura:attribute name="PickListPostOffices" type="List"/>
+    <aura:attribute name="toggleSpinner" type="boolean" default="false"/>
+
+    <div class="container bgs-white">
+        <aura:if isTrue="{!v.toggleSpinner}">
+            <lightning:spinner alternativeText="Loading" variant="brand" size="large" aura:id="LoadingSpinner"/>
+        </aura:if>
+        <div class="slds-grid slds-p-top_large">
+            <div class="slds-col slds-size_1-of-6">
+                <div class="seashell-background slds-box slds-text-align_center slds-box_small slds-m-around_medium">
+                    Size
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="seashell-background slds-box slds-text-align_center slds-box_small slds-m-around_medium">
+                    Weight
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="seashell-background slds-box slds-text-align_center slds-box_small slds-m-around_medium">
+                    Type
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="seashell-background slds-box slds-text-align_center slds-box_small slds-m-around_medium">
+                    Price
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="seashell-background slds-box slds-text-align_center slds-box_small slds-m-around_medium">
+                    From
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="seashell-background slds-box slds-text-align_center slds-box_small slds-m-around_medium">
+                    To
+                </div>
+            </div>
+        </div>
+        <div class="slds-grid slds-wrap slds-p-bottom_large">
+            <aura:iteration items="{!v.newPackages}" var="Package">
+                <div class="slds-col slds-size_1-of-6">
+                    <lightning:select class="slds-m-around_medium" name="Size" value="{!Package.Size__c}"
+                                      onchange="{!c.setPackageRefreshEvent}">
+                        <aura:iteration items="{!v.PickListSize}" var="val">
+                            <option value="{!val.value}" text="{!val.label}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <div class="slds-col slds-size_1-of-6">
+                    <lightning:select class="slds-m-around_medium" name="Weight" value="{!Package.Weight__c}"
+                                      onchange="{!c.setPackageRefreshEvent}">
+                        <aura:iteration items="{!v.PickListWeight}" var="val">
+                            <option value="{!val.value}" text="{!val.label}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <div class="slds-col slds-size_1-of-6" onchange="{!c.setPackageRefreshEvent}">
+                    <lightning:select class="slds-m-around_medium" name="Type" value="{!Package.Type__c}">
+                        <aura:iteration items="{!v.PickListType}" var="val">
+                            <option value="{!val.value}" text="{!val.label}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <div class="slds-col slds-size_1-of-6" onchange="{!c.setPackageRefreshEvent}">
+                    <lightning:input class="slds-m-around_medium" type="number" name="Delivery_Price"
+                                     formatter="currency" value="{!Package.Delivery_Price__c}" step="0.01"/>
+                </div>
+                <div class="slds-col slds-size_1-of-6" onchange="{!c.setPackageRefreshEvent}">
+                    <lightning:select class="slds-m-around_medium" name="Send_from" value="{!Package.Sent_from__c}">
+                        <aura:iteration items="{!v.PickListPostOffices}" var="office">
+                            <option value="{!office.Id}" text="{!office.Name}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <div class="slds-col slds-size_1-of-6" onchange="{!c.setPackageRefreshEvent}">
+                    <lightning:select class="slds-m-around_medium" name="Send_to" value="{!Package.Sent_to__c}">
+                        <aura:iteration items="{!v.PickListPostOffices}" var="office">
+                            <option value="{!office.Id}" text="{!office.Name}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+            </aura:iteration>
+        </div>
+        <lightning:button class="slds-m-horizontal_medium slds-m-bottom_large" label="+" title="NewRow"
+                          onclick="{!c.addNewRow}"/>
+        <lightning:button class="slds-m-horizontal_medium slds-m-bottom_large" label="Done" title="Done"
+                          onclick="{!c.prepareToSavePackages}"/>
+    </div>
+</aura:component>

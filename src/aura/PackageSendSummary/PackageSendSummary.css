@@ -1,0 +1,8 @@
+.THIS.container {
+    background-color: seashell;
+    min-height: 1000px;
+}
+
+.THIS .white-background {
+    background-color: #ffffff;
+}
