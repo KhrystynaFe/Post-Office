@@ -1,4 +1,4 @@
-public without sharing class PackageCont {
+public without sharing class PackageSendController {
     @AuraEnabled
     public static void savePackages(String new_packages) {
         List<Package__c> newPackagesList = (List<Package__c>) JSON.deserialize(new_packages, List<Package__c>.class);
@@ -20,9 +20,9 @@ public without sharing class PackageCont {
     }
 
     @TestVisible
-    private static List<PicklistOption> toPicklistOptions(List<Schema.PicklistEntry> picklistEnties) {
+    private static List<PicklistOption> toPicklistOptions(List<Schema.PicklistEntry> picklistEntries) {
         List<PickListOption> result = new List<PicklistOption>();
-        for (Schema.PicklistEntry entry : picklistEnties) {
+        for (Schema.PicklistEntry entry : picklistEntries) {
             result.add(new PicklistOption(entry));
         }
         return result;

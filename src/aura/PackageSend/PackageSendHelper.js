@@ -33,11 +33,25 @@
             if (response.getState() === "SUCCESS") {
                 cmp.set("v.PickListPostOffices", response.getReturnValue());
                 this.setDefaultPackages(cmp);
-            } else if (state === "ERROR") {
+            } else if (response.getState() === "ERROR") {
                 this.showErrorToast("Picklist values for Post Offices was not set.");
             }
         });
         $A.enqueueAction(action);
+    },
+
+    generateNewRow: function (cmp) {
+        let packages = cmp.get("v.newPackages");
+        packages.push({
+            'Size__c': cmp.get('v.PickListSize')[0].value,
+            'Weight__c': cmp.get('v.PickListWeight')[0].value,
+            'Type__c': cmp.get('v.PickListType')[0].value,
+            'Delivery_Price__c': '',
+            'Sent_from__c': cmp.get('v.PickListPostOffices')[0].Id,
+            'Sent_to__c': cmp.get('v.PickListPostOffices')[0].Id,
+        })
+        cmp.set("v.newPackages", packages);
+        this.setPackageRefreshEvent(cmp);
     },
 
     showSuccessToast: function () {
@@ -48,6 +62,28 @@
             "type": "success"
         });
         toastEvent.fire();
+    },
+
+    prepareToSavePackages: function (cmp) {
+        let action = cmp.get("c.savePackages");
+        action.setParams({new_packages: JSON.stringify(cmp.get("v.newPackages"))});
+        action.setCallback(this, function (response) {
+            let state = response.getState();
+            if (state === "SUCCESS") {
+                this.showSuccessToast(cmp);
+            } else if (state === "ERROR") {
+                this.showErrorToast("Can't deliver long road.");
+            }
+        });
+        $A.enqueueAction(action);
+    },
+
+    removeRow: function (cmp, event) {
+        let newPackages = cmp.get("v.newPackages");
+        newPackages.splice(event.target.dataset.index, 1);
+        console.log(event.target.dataset.index);
+        cmp.set("v.newPackages", newPackages);
+        this.setPackageRefreshEvent(cmp);
     },
 
     showErrorToast: function (message) {
@@ -65,5 +101,13 @@
         let newPackages = cmp.get("v.newPackages");
         PackageRefreshEventEvent.setParams({"newPackages": newPackages});
         PackageRefreshEventEvent.fire();
+    },
+
+    showSpinner: function (cmp) {
+        cmp.set("v.toggleSpinner", true);
+    },
+
+    hideSpinner: function (cmp) {
+        cmp.set("v.toggleSpinner", false);
     },
 })

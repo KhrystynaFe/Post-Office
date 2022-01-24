@@ -11,7 +11,7 @@ private class PackageTriggerTests {
         Exception longRoadException;
         Test.startTest();
         try {
-            PackageCont.savePackages(jsonPackage);
+            PackageSendController.savePackages(jsonPackage);
         } catch (Exception e) {
             longRoadException = e;
         }
@@ -31,7 +31,7 @@ private class PackageTriggerTests {
         String longRoadException;
         Test.startTest();
         try {
-            PackageCont.savePackages(jsonPackage);
+            PackageSendController.savePackages(jsonPackage);
         } catch (Exception e) {
             longRoadException = e.getMessage();
         }

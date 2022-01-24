@@ -1,0 +1,13 @@
+.THIS.container {
+    background-color: #fff;
+    min-height: 1000px;
+}
+
+.THIS .slds-button_icon-bare {
+    display: none;
+}
+
+.THIS .data-table {
+    height: 400px;
+    width: 1200px;
+}
