@@ -1,25 +1,25 @@
 <aura:component implements="flexipage:availableForAllPageTypes" controller="CourierController">
     <aura:attribute name="toggleSpinner" type="boolean" default="false"/>
-    <aura:attribute name="Sender" type="String"/>
-    <aura:attribute name="Receiver" type="String"/>
-    <aura:attribute name="Delivery" type="Delivery__c"/>
-    <aura:attribute name="PostOfficeFrom" type="Post_Office__c"/>
-    <aura:attribute name="PostOfficeTo" type="Post_Office__c"/>
-    <aura:attribute name="Packages" type="Package__c[]"/>
-    <aura:attribute name="WaitingToPickUpPackages" type="Package__c[]"/>
-    <aura:attribute name="DeliveringPackages" type="Package__c[]"/>
-    <aura:attribute name="DeliveredButNotPaidPackages" type="Package__c[]"/>
+    <aura:attribute name="sender" type="String"/>
+    <aura:attribute name="receiver" type="String"/>
+    <aura:attribute name="delivery" type="Delivery__c"/>
+    <aura:attribute name="postOfficeFrom" type="Post_Office__c"/>
+    <aura:attribute name="postOfficeTo" type="Post_Office__c"/>
+    <aura:attribute name="packages" type="Package__c[]"/>
+    <aura:attribute name="waitingToPickUpPackages" type="Package__c[]"/>
+    <aura:attribute name="deliveringPackages" type="Package__c[]"/>
+    <aura:attribute name="deliveredButNotPaidPackages" type="Package__c[]"/>
     <aura:attribute name="columns" type="List"/>
 
-    <aura:attribute name="SelectedReadyToPickUpPackagesCount" type="Integer" default="0"/>
-    <aura:attribute name="SelectedDeliveringPackagesCount" type="Integer" default="0"/>
-    <aura:attribute name="SelectedDeliveredButNotPaidPackagesCount" type="Integer" default="0"/>
+    <aura:attribute name="selectedReadyToPickUpPackagesCount" type="Integer" default="0"/>
+    <aura:attribute name="selectedDeliveringPackagesCount" type="Integer" default="0"/>
+    <aura:attribute name="selectedDeliveredButNotPaidPackagesCount" type="Integer" default="0"/>
 
-    <aura:attribute name="SelectedReadyToPickUpPackages" type="Package__c[]"/>
-    <aura:attribute name="SelectedDeliveringPackages" type="Package__c[]"/>
-    <aura:attribute name="SelectedDeliveredButNotPaidPackages" type="Package__c[]"/>
+    <aura:attribute name="selectedReadyToPickUpPackages" type="Package__c[]"/>
+    <aura:attribute name="selectedDeliveringPackages" type="Package__c[]"/>
+    <aura:attribute name="selectedDeliveredButNotPaidPackages" type="Package__c[]"/>
 
-    <aura:handler name="change" value="{!v.Delivery}" action="{!c.handleChangingDelivery}"/>
+    <aura:handler name="change" value="{!v.delivery}" action="{!c.handleChangingDelivery}"/>
 
     <aura:if isTrue="{!v.toggleSpinner}">
         <lightning:spinner alternativeText="Loading" variant="brand" size="large"/>
@@ -32,31 +32,31 @@
         <div class="slds-grid">
             <div class="slds-float_left slds-m-around_large">
                 <lightning:input class="slds-m-bottom_medium" label="Sender" type="text" placeholder="Post office №"
-                                 value="{!v.Sender}"/>
-                <lightning:input label="Receiver" type="text" placeholder="Post office №" value="{!v.Receiver}"/>
+                                 value="{!v.sender}"/>
+                <lightning:input label="Receiver" type="text" placeholder="Post office №" value="{!v.receiver}"/>
                 <lightning:button class="slds-m-around_large slds-button_outline-brand" label="Show Delivery"
                                   onclick="{!c.setDelivery}"/>
             </div>
-            <div class="slds-box slds-float_left slds-m-around_x-large">
+            <div class="slds-box slds-float_left slds-m-around_x-large box-with-table">
                 <lightning:tabset selectedTabId="one">
                     <lightning:tab label="Waiting to pick up" id="one">
                         <div class="slds-grid">
                             <div class="slds-text-heading_small slds-m-horizontal_medium slds-m-vertical_small">
-                                Delivery № {!v.Delivery.Name}  From:
-                                <lightning:formattedUrl value="{!v.PostOfficeFrom.linkName}"
-                                                        label="{!v.PostOfficeFrom.Name}"/>
+                                Delivery № {!v.delivery.Name}  From:
+                                <lightning:formattedUrl value="{!v.postOfficeFrom.linkName}"
+                                                        label="{!v.postOfficeFrom.Name}"/>
                                 To:
-                                <lightning:formattedUrl value="{!v.PostOfficeTo.linkName}"
-                                                        label="{!v.PostOfficeTo.Name}"/>
+                                <lightning:formattedUrl value="{!v.postOfficeTo.linkName}"
+                                                        label="{!v.postOfficeTo.Name}"/>
                             </div>
                         </div>
                         <div class="data-table">
-                            <h1>Selected Packages: {!v.SelectedReadyToPickUpPackagesCount}</h1>
+                            <h1>Selected Packages: {!v.selectedReadyToPickUpPackagesCount}</h1>
                             <lightning:datatable
                                     title="Waiting to pick up"
                                     columns="{!v.columns}"
                                     keyField="Id"
-                                    data="{!v.WaitingToPickUpPackages}"
+                                    data="{!v.waitingToPickUpPackages}"
                                     onrowselection="{!c.handleSelectingReadyToPickUpPackages}"/>
                         </div>
                         <lightning:button class="slds-m-top_x-large" onclick="{!c.sendSelectedPackages}"
@@ -65,21 +65,21 @@
                     <lightning:tab label="Delivering" id="two">
                         <div class="slds-grid">
                             <div class="slds-text-heading_small slds-m-horizontal_medium slds-m-vertical_small">
-                                Delivery № {!v.Delivery.Name}  From:
-                                <lightning:formattedUrl value="{!v.PostOfficeFrom.linkName}"
-                                                        label="{!v.PostOfficeFrom.Name}"/>
+                                Delivery № {!v.delivery.Name}  From:
+                                <lightning:formattedUrl value="{!v.postOfficeFrom.linkName}"
+                                                        label="{!v.postOfficeFrom.Name}"/>
                                 To:
-                                <lightning:formattedUrl value="{!v.PostOfficeTo.linkName}"
-                                                        label="{!v.PostOfficeTo.Name}"/>
+                                <lightning:formattedUrl value="{!v.postOfficeTo.linkName}"
+                                                        label="{!v.postOfficeTo.Name}"/>
                             </div>
                         </div>
                         <div class="data-table">
-                            <h1>Selected Packages: {!v.SelectedDeliveringPackagesCount}</h1>
+                            <h1>Selected Packages: {!v.selectedDeliveringPackagesCount}</h1>
                             <lightning:datatable
                                     title="Delivering Packages"
                                     columns="{!v.columns}"
                                     keyField="Id"
-                                    data="{!v.DeliveringPackages}"
+                                    data="{!v.deliveringPackages}"
                                     onrowselection="{!c.handleSelectingDeliveringPackages}"/>
                         </div>
                         <lightning:button class="slds-m-top_x-large" onclick="{!c.receiveSelectedPackages}"
@@ -88,21 +88,21 @@
                     <lightning:tab label="Received by post office but not Paid" id="three">
                         <div class="slds-grid">
                             <div class="slds-text-heading_small slds-m-horizontal_medium slds-m-vertical_small">
-                                Delivery № {!v.Delivery.Name}  From:
-                                <lightning:formattedUrl value="{!v.PostOfficeFrom.linkName}"
-                                                        label="{!v.PostOfficeFrom.Name}"/>
+                                Delivery № {!v.delivery.Name}  From:
+                                <lightning:formattedUrl value="{!v.postOfficeFrom.linkName}"
+                                                        label="{!v.postOfficeFrom.Name}"/>
                                 To:
-                                <lightning:formattedUrl value="{!v.PostOfficeTo.linkName}"
-                                                        label="{!v.PostOfficeTo.Name}"/>
+                                <lightning:formattedUrl value="{!v.postOfficeTo.linkName}"
+                                                        label="{!v.postOfficeTo.Name}"/>
                             </div>
                         </div>
                         <div class="data-table">
-                            <h1>Selected Packages: {!v.SelectedDeliveredButNotPaidPackagesCount}</h1>
+                            <h1>Selected Packages: {!v.selectedDeliveredButNotPaidPackagesCount}</h1>
                             <lightning:datatable
                                     title="Received by post office but not Paid"
                                     columns="{!v.columns}"
                                     keyField="Id"
-                                    data="{!v.DeliveredButNotPaidPackages}"
+                                    data="{!v.deliveredButNotPaidPackages}"
                                     onrowselection="{!c.handleSelectingDeliveredButNotPaidPackages}"/>
                         </div>
                         <lightning:button class="slds-m-top_x-large" onclick="{!c.makeSelectedPackagesPaid}"

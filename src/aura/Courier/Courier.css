@@ -7,7 +7,14 @@
     display: none;
 }
 
-.THIS .data-table {
-    height: 400px;
-    width: 1200px;
+.THIS .box-with-table{
+    min-height: 500px;
+    height: 50%;
+    width: 50%;
 }
+
+.THIS .data-table {
+    height: 100%;
+    width: 100%;
+}
+

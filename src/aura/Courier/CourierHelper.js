@@ -2,12 +2,13 @@
     generateNewDeliveries: function (cmp) {
         let action = cmp.get("c.prepareAndInsertDeliveries");
         action.setCallback(this, function (response) {
-            let state = response.getState();
-            if (state === "ERROR") {
-                let errors = response.getError();
-                if (errors) {
-                    this.showErrorToast(errors[0].message);
-                }
+            let result = response.getReturnValue();
+            if (result === false) {
+                this.hideSpinner(cmp);
+                this.showErrorToast("All possible unique Deliveries are already created");
+            } else {
+                this.hideSpinner(cmp);
+                this.showSuccessToast("New Delivery was created!")
             }
         });
         $A.enqueueAction(action);
@@ -15,12 +16,14 @@
 
     setDelivery: function (cmp) {
         let action = cmp.get("c.findDelivery");
-        action.setParams({"sender": (cmp.get("v.Sender")), "receiver": (cmp.get("v.Receiver"))});
+        action.setParams({"sender": cmp.get("v.sender"), "receiver": cmp.get("v.receiver")});
         action.setCallback(this, function (response) {
             let state = response.getState();
             if (state === "SUCCESS") {
-                cmp.set("v.Delivery", response.getReturnValue());
+                cmp.set("v.delivery", response.getReturnValue());
+                this.hideSpinner(cmp);
             } else if (state === "ERROR") {
+                this.hideSpinner(cmp);
                 this.showErrorToast("There are no deliveries with these parameters.");
             }
         });
@@ -28,37 +31,46 @@
     },
 
     setPostOffices: function (cmp) {
-        let action = cmp.get("c.findPostOffices");
-        action.setParams({"delivery": (cmp.get("v.Delivery"))});
+        let action = cmp.get("c.findPostOfficesByDelivery");
+        action.setParams({"delivery": cmp.get("v.delivery")});
         action.setCallback(this, function (response) {
             let state = response.getState();
-            if (state === "SUCCESS" && response.getReturnValue().length !== 0) {
-                let records = response.getReturnValue();
-                records.forEach(function (record) {
-                    record.linkName = '/' + record.Id;
-                });
-                cmp.set("v.PostOfficeFrom", records[0]);
-                cmp.set("v.PostOfficeTo", records[1]);
-            } else if (state === "ERROR" || response.getReturnValue().length == 0) {
+            let records = response.getReturnValue();
+            if (state === "SUCCESS") {
+                let sender = records["sender"];
+                let receiver = records["receiver"];
+                sender.linkName = '/' + sender.Id;
+                receiver.linkName = '/' + receiver.Id;
+                cmp.set("v.postOfficeFrom", sender);
+                cmp.set("v.postOfficeTo", receiver);
+                this.hideSpinner(cmp);
+            } else if (state === "ERROR") {
                 this.showErrorToast("No Post offices found");
+                this.hideSpinner(cmp);
+                cmp.set("v.postOfficeFrom", 0);
+                cmp.set("v.postOfficeTo", 0);
             }
         });
         $A.enqueueAction(action);
     },
 
     setPackages: function (cmp) {
-        let action = cmp.get("c.findPackages");
-        let delivery = cmp.get("v.Delivery");
+        let action = cmp.get("c.findPackagesByDelivery");
+        let delivery = cmp.get("v.delivery");
         action.setParams({"delivery": delivery});
         action.setCallback(this, function (response) {
             let state = response.getState();
-            if (state === "SUCCESS" && response.getReturnValue().length !== 0) {
-                cmp.set("v.Packages", response.getReturnValue());
+            let packages = response.getReturnValue();
+            if (state === "SUCCESS" && packages && packages.length) {
+                cmp.set("v.packages", packages);
                 this.setWaitingToPickUpPackages(cmp, delivery);
                 this.setDeliveringPackages(cmp, delivery);
                 this.setDeliveredButNotPaidPackages(cmp, delivery);
                 this.setColumns(cmp);
-            } else if (state === "ERROR" || response.getReturnValue().length == 0) {
+                this.hideSpinner(cmp);
+            } else if (state === "ERROR" || !packages.length) {
+                this.hideSpinner(cmp);
+                cmp.set("v.packages", []);
                 this.showErrorToast("No packages found");
             }
         });
@@ -66,35 +78,38 @@
     },
 
     setWaitingToPickUpPackages: function (cmp, delivery) {
-        let action = cmp.get("c.findWaitingToPickUpPackages");
+        let action = cmp.get("c.findWaitingToPickUpPackagesByDelivery");
         action.setParams({"delivery": delivery});
         action.setCallback(this, function (response) {
             let state = response.getState();
-            if (state === "SUCCESS" && response.getReturnValue().length !== 0) {
-                let records = response.getReturnValue();
-                records.forEach(function (record) {
-                    record.linkName = '/' + record.Id;
-                });
-                cmp.set("v.WaitingToPickUpPackages", records);
-            } else if (state === "ERROR" || response.getReturnValue().length == 0) {
+            let records = response.getReturnValue();
+            if (state === "SUCCESS" && records && records.length) {
+                cmp.set("v.waitingToPickUpPackages", this.setRecordLinks(records));
+            } else if (state === "ERROR" || !records.length) {
+                cmp.set("v.waitingToPickUpPackages", []);
                 this.showInfoToast("No Waiting To Pick Up Packages found");
             }
         });
         $A.enqueueAction(action);
     },
 
+    setRecordLinks: function (records) {
+        records.forEach(function (record) {
+            record.linkName = '/' + record.Id;
+        });
+        return records;
+    },
+
     setDeliveringPackages: function (cmp, delivery) {
-        let action = cmp.get("c.findDeliveringPackages");
+        let action = cmp.get("c.findDeliveringPackagesByDelivery");
         action.setParams({"delivery": delivery});
         action.setCallback(this, function (response) {
             let state = response.getState();
-            if (state === "SUCCESS" && response.getReturnValue().length !== 0) {
-                let records = response.getReturnValue();
-                records.forEach(function (record) {
-                    record.linkName = '/' + record.Id;
-                });
-                cmp.set("v.DeliveringPackages", records);
-            } else if (state === "ERROR" || response.getReturnValue().length == 0) {
+            let records = response.getReturnValue();
+            if (state === "SUCCESS" && records && records.length) {
+                cmp.set("v.deliveringPackages", this.setRecordLinks(records));
+            } else if (state === "ERROR" || !records.length) {
+                cmp.set("v.deliveringPackages", []);
                 this.showInfoToast("No Delivering Packages found");
             }
         });
@@ -102,17 +117,15 @@
     },
 
     setDeliveredButNotPaidPackages: function (cmp, delivery) {
-        let action = cmp.get("c.findDeliveredButNotPaidPackages");
+        let action = cmp.get("c.findDeliveredButNotPaidPackagesByDelivery");
         action.setParams({"delivery": delivery});
         action.setCallback(this, function (response) {
             let state = response.getState();
-            if (state === "SUCCESS" && response.getReturnValue().length !== 0) {
-                let records = response.getReturnValue();
-                records.forEach(function (record) {
-                    record.linkName = '/' + record.Id;
-                });
-                cmp.set("v.DeliveredButNotPaidPackages", records);
-            } else if (state === "ERROR" || response.getReturnValue().length == 0) {
+            let records = response.getReturnValue();
+            if (state === "SUCCESS" && records && records.length) {
+                cmp.set("v.deliveredButNotPaidPackages", this.setRecordLinks(records));
+            } else if (state === "ERROR" || !records.length) {
+                cmp.set("v.deliveredButNotPaidPackages", []);
                 this.showInfoToast("No Delivered But Not Paid Packages found");
             }
         });
@@ -121,12 +134,7 @@
 
     setColumns: function (cmp) {
         cmp.set("v.columns", [
-            {
-                label: "Package Number",
-                fieldName: 'linkName',
-                type: 'url',
-                typeAttributes: {label: {fieldName: 'Name'}, target: '_blank'}
-            },
+            {label: "Package Number", fieldName: 'linkName', type: 'url', typeAttributes: {label: {fieldName: 'Name'}, target: '_blank'}},
             {label: "Delivery Price", fieldName: "Delivery_Price__c", type: "currency"},
             {label: "Status", fieldName: "Status__c", type: "text"},
             {label: "Accepted Date", fieldName: "Accepted_Datetime__c", type: "date"},
@@ -139,53 +147,75 @@
 
     updateSelectedReadyToPickUpPackagesCountText: function (cmp, event) {
         let selectedRows = event.getParam('selectedRows');
-        cmp.set("v.SelectedReadyToPickUpPackagesCount", selectedRows.length);
+        cmp.set("v.selectedReadyToPickUpPackagesCount", selectedRows.length);
     },
 
     updateSelectedDeliveringPackagesCountText: function (cmp, event) {
         let selectedRows = event.getParam('selectedRows');
-        cmp.set("v.SelectedDeliveringPackagesCount", selectedRows.length);
+        cmp.set("v.selectedDeliveringPackagesCount", selectedRows.length);
     },
 
     updateSelectedDeliveredButNotPaidPackagesCountText: function (cmp, event) {
         let selectedRows = event.getParam('selectedRows');
-        cmp.set("v.SelectedDeliveredButNotPaidPackagesCount", selectedRows.length);
+        cmp.set("v.selectedDeliveredButNotPaidPackagesCount", selectedRows.length);
     },
 
     sendSelectedPackages: function (cmp) {
-        let action = cmp.get("c.updatePackagesStatusToDelivering");
-        action.setParams({"packages": cmp.get("v.SelectedReadyToPickUpPackages")});
+        let action = cmp.get("c.updatePackages");
+        let packages = cmp.get("v.selectedReadyToPickUpPackages");
+        packages.forEach(function (item) {
+            item.Status__c = "Delivering";
+        });
+        action.setParams({"packages": packages});
         action.setCallback(this, function (response) {
             let state = response.getState();
             if (state === "SUCCESS") {
+                this.hideSpinner(cmp);
                 this.showSuccessToast("Packages were sent!");
                 this.setPackages(cmp);
+            } else if (state === "ERROR") {
+                this.hideSpinner(cmp);
+                this.showErrorToast("Packages could not be sent");
             }
         });
         $A.enqueueAction(action);
     },
 
     receiveSelectedPackages: function (cmp) {
-        let action = cmp.get("c.updatePackagesStatusToReceivedByPostOffice");
-        action.setParams({"packages": cmp.get("v.SelectedDeliveringPackages")});
+        let action = cmp.get("c.updatePackages");
+        let packages = cmp.get("v.selectedDeliveringPackages");
+        packages.forEach(function (item) {
+            item.Status__c = "Received by post office";
+        });
+        action.setParams({"packages": packages});
         action.setCallback(this, function (response) {
             let state = response.getState();
             if (state === "SUCCESS") {
                 this.showSuccessToast("Packages were received!");
                 this.setPackages(cmp);
+            } else if (state === "ERROR") {
+                this.hideSpinner(cmp);
+                this.showErrorToast("Packages could not be received");
             }
         });
         $A.enqueueAction(action);
     },
 
     makeSelectedPackagesPaid: function (cmp) {
-        let action = cmp.get("c.updatePackagesPaidFieldValueToTrue");
-        action.setParams({"packages": cmp.get("v.SelectedDeliveredButNotPaidPackages")});
+        let action = cmp.get("c.updatePackages");
+        let packages = cmp.get("v.selectedDeliveredButNotPaidPackages");
+        packages.forEach(function (item) {
+            item.Paid__c = true;
+        });
+        action.setParams({"packages": packages});
         action.setCallback(this, function (response) {
             let state = response.getState();
             if (state === "SUCCESS") {
                 this.showSuccessToast("Packages are now ready to be taken by clients!");
                 this.setPackages(cmp);
+            } else if (state === "ERROR") {
+                this.hideSpinner(cmp);
+                this.showErrorToast("Packages could not be marked as paid");
             }
         });
         $A.enqueueAction(action);

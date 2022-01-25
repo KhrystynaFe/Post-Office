@@ -3,10 +3,10 @@
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
 
     <aura:attribute name="newPackages" type="Package__c[]"/>
-    <aura:attribute name="PickListSize" type="List"/>
-    <aura:attribute name="PickListWeight" type="List"/>
-    <aura:attribute name="PickListType" type="List"/>
-    <aura:attribute name="PickListPostOffices" type="List"/>
+    <aura:attribute name="pickListSize" type="List"/>
+    <aura:attribute name="pickListWeight" type="List"/>
+    <aura:attribute name="pickListType" type="List"/>
+    <aura:attribute name="pickListPostOffices" type="List"/>
     <aura:attribute name="toggleSpinner" type="boolean" default="true"/>
     <aura:if isTrue="{!v.toggleSpinner}">
         <lightning:spinner alternativeText="Loading" variant="brand" size="large"/>
@@ -50,7 +50,7 @@
                 <div class="slds-col slds-size_1-of-7">
                     <lightning:select class="slds-m-around_medium" name="Size" value="{!Package.Size__c}"
                                       onchange="{!c.setPackageRefreshEvent}">
-                        <aura:iteration items="{!v.PickListSize}" var="val">
+                        <aura:iteration items="{!v.pickListSize}" var="val">
                             <option value="{!val.value}" text="{!val.label}"/>
                         </aura:iteration>
                     </lightning:select>
@@ -58,14 +58,14 @@
                 <div class="slds-col slds-size_1-of-7">
                     <lightning:select class="slds-m-around_medium" name="Weight" value="{!Package.Weight__c}"
                                       onchange="{!c.setPackageRefreshEvent}">
-                        <aura:iteration items="{!v.PickListWeight}" var="val">
+                        <aura:iteration items="{!v.pickListWeight}" var="val">
                             <option value="{!val.value}" text="{!val.label}"/>
                         </aura:iteration>
                     </lightning:select>
                 </div>
                 <div class="slds-col slds-size_1-of-7" onchange="{!c.setPackageRefreshEvent}">
                     <lightning:select class="slds-m-around_medium" name="Type" value="{!Package.Type__c}">
-                        <aura:iteration items="{!v.PickListType}" var="val">
+                        <aura:iteration items="{!v.pickListType}" var="val">
                             <option value="{!val.value}" text="{!val.label}"/>
                         </aura:iteration>
                     </lightning:select>
@@ -76,14 +76,14 @@
                 </div>
                 <div class="slds-col slds-size_1-of-7" onchange="{!c.setPackageRefreshEvent}">
                     <lightning:select class="slds-m-around_medium" name="Send_from" value="{!Package.Sent_from__c}">
-                        <aura:iteration items="{!v.PickListPostOffices}" var="office">
+                        <aura:iteration items="{!v.pickListPostOffices}" var="office">
                             <option value="{!office.Id}" text="{!office.Name}"/>
                         </aura:iteration>
                     </lightning:select>
                 </div>
                 <div class="slds-col slds-size_1-of-7" onchange="{!c.setPackageRefreshEvent}">
                     <lightning:select class="slds-m-around_medium" name="Send_to" value="{!Package.Sent_to__c}">
-                        <aura:iteration items="{!v.PickListPostOffices}" var="office">
+                        <aura:iteration items="{!v.pickListPostOffices}" var="office">
                             <option value="{!office.Id}" text="{!office.Name}"/>
                         </aura:iteration>
                     </lightning:select>

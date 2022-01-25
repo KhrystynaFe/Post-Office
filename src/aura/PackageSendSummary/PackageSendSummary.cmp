@@ -1,11 +1,11 @@
 <aura:component controller="PackageSendSummaryController">
 
     <aura:attribute name="newPackages" type="List"/>
-    <aura:attribute name="TotalNumberOfPackages" type="Integer"/>
-    <aura:attribute name="TotalPrice" type="Double"/>
-    <aura:attribute name="TotalWeight" type="Integer"/>
-    <aura:attribute name="TotalSize" type="Integer"/>
-    <aura:attribute name="TotalDistance" type="Double"/>
+    <aura:attribute name="totalNumberOfPackages" type="Integer"/>
+    <aura:attribute name="totalPrice" type="Double"/>
+    <aura:attribute name="totalWeight" type="Integer"/>
+    <aura:attribute name="totalSize" type="Integer"/>
+    <aura:attribute name="totalDistance" type="Double"/>
 
     <aura:handler event="c:ApplicationEvent" action="{!c.handlePackageRefreshEvent}"/>
 
@@ -39,19 +39,19 @@
         </div>
         <div class="slds-grid slds-p-top_large">
             <div class="slds-col slds-size_1-of-5">
-                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalNumberOfPackages}</div>
+                <div class="slds-m-around_medium slds-text-align_center">{!v.totalNumberOfPackages}</div>
             </div>
             <div class="slds-col slds-size_1-of-5">
-                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalPrice}</div>
+                <div class="slds-m-around_medium slds-text-align_center">{!v.totalPrice}</div>
             </div>
             <div class="slds-col slds-size_1-of-5">
-                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalWeight}</div>
+                <div class="slds-m-around_medium slds-text-align_center">{!v.totalWeight}</div>
             </div>
             <div class="slds-col slds-size_1-of-5">
-                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalSize}</div>
+                <div class="slds-m-around_medium slds-text-align_center">{!v.totalSize}</div>
             </div>
             <div class="slds-col slds-size_1-of-5">
-                <div class="slds-m-around_medium slds-text-align_center">{!v.TotalDistance}</div>
+                <div class="slds-m-around_medium slds-text-align_center">{!v.totalDistance}</div>
             </div>
         </div>
     </div>
