@@ -11,7 +11,7 @@ private class PackageTriggerTests {
         Exception longRoadException;
         Test.startTest();
         try {
-            PackageCont.savePackages(jsonPackage);
+            PackageSendController.savePackages(jsonPackage);
         } catch (Exception e) {
             longRoadException = e;
         }
@@ -20,6 +20,7 @@ private class PackageTriggerTests {
     }
 
     @isTest static void TestCreatePackageWithValidDistance() {
+        Test.setMock(HttpCalloutMock.class, new MockHttpResponsePackageDateTime());
         Post_Office__c postOfficeFrom = new Post_Office__c(Location__latitude__s = 50.518477, Location__longitude__s = 30.568477);
         Post_Office__c postOfficeTo = new Post_Office__c(Location__latitude__s = 50.513831, Location__longitude__s = 30.570719);
         insert postOfficeTo;
@@ -30,7 +31,7 @@ private class PackageTriggerTests {
         String longRoadException;
         Test.startTest();
         try {
-            PackageCont.savePackages(jsonPackage);
+            PackageSendController.savePackages(jsonPackage);
         } catch (Exception e) {
             longRoadException = e.getMessage();
         }

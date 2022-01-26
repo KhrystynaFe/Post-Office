@@ -10,6 +10,6 @@ private class PackageTriggerDateTimeRequestTest {
         Test.startTest();
         insert newPackage;
         Test.stopTest();
-        System.assert(!(newPackage.Accepted_Datetime__c == null));
+        System.assert(!([SELECT Accepted_Datetime__c FROM Package__c] == null));
     }
 }
