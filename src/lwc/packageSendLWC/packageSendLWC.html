@@ -1,0 +1,99 @@
+<template>
+    <div class="container bgs-white">
+        <div class="slds-grid slds-no-flex slds-m-around_medium">
+            <div class="slds-col slds-size_1-of-7">
+                <div class="slds-text-align_center slds-box_small slds-m-top_medium">
+                    <lightning-badge label="Size:"></lightning-badge>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-7">
+                <div class="slds-text-align_center slds-box_small slds-m-top_medium">
+                    <lightning-badge label="Weight:"></lightning-badge>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-7">
+                <div class="slds-text-align_center slds-box_small slds-m-top_medium">
+                    <lightning-badge label="Type:"></lightning-badge>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-7">
+                <div class="slds-text-align_center slds-box_small slds-m-top_medium">
+                    <lightning-badge label="Price:"></lightning-badge>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-7">
+                <div class="slds-text-align_center slds-box_small slds-m-top_medium">
+                    <lightning-badge label="From:"></lightning-badge>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-7">
+                <div class="slds-text-align_center slds-box_small slds-m-top_medium">
+                    <lightning-badge label="To:"></lightning-badge>
+                </div>
+            </div>
+        </div>
+        <div class="slds-grid slds-wrap slds-m-around_medium">
+            <template for:each={newPackages} for:item="newPackage" for:index="index">
+                <div key={newPackage.Size__c} class="slds-col slds-size_1-of-7 slds-var-m-top_xx-small">
+                    <lightning-combobox
+                            data-field="Size"
+                            name={index}
+                            value={newPackage.Size__c}
+                            options={sizeOptions}
+                            onchange={handleInputChange}>
+                    </lightning-combobox>
+                </div>
+                <div key={newPackage.Weight__c} class="slds-col slds-size_1-of-7 slds-var-m-top_xx-small">
+                    <lightning-combobox
+                            data-field="Weight"
+                            name={index}
+                            value={newPackage.Weight__c}
+                            options={weightOptions}
+                            onchange={handleInputChange}>
+                    </lightning-combobox>
+                </div>
+                <div key={newPackage.Type__c} class="slds-col slds-size_1-of-7 slds-var-m-top_xx-small">
+                    <lightning-combobox
+                            data-field="Type"
+                            name={index}
+                            value={newPackage.Type__c}
+                            options={typeOptions}
+                            onchange={handleInputChange}>
+                    </lightning-combobox>
+                </div>
+                <div key={newPackage.Delivery_Price__c} class="slds-col slds-size_1-of-7 slds-var-m-top_xx-small">
+                    <lightning-input data-field="Delivery_Price" type="number" value={newPackage.Delivery_Price__c}
+                                     name={index} formatter="currency" class="delivery-price-input"
+                                     step="0.01" placeholder="Enter delivery price here..."></lightning-input>
+                </div>
+                <div key={newPackage.Sent_from__c} class="slds-col slds-size_1-of-7 slds-var-m-top_xx-small">
+                    <lightning-combobox
+                            data-field="Sent_from"
+                            name={index}
+                            value={newPackage.Sent_from__c}
+                            options={postOfficesOptions}
+                            onchange={handleInputChange}>
+                    </lightning-combobox>
+                </div>
+                <div key={newPackage.Sent_to__c} class="slds-col slds-size_1-of-7 slds-var-m-top_xx-small">
+                    <lightning-combobox
+                            data-field="Sent_to"
+                            name={index}
+                            value={newPackage.Sent_to__c}
+                            options={postOfficesOptions}
+                            onchange={handleInputChange}>
+                    </lightning-combobox>
+                </div>
+                <div key={newPackage.deleteRow} class="slds-col slds-size_1-of-7 slds-var-p-top_large">
+                    <lightning-button-icon icon-name="utility:delete" variant="bare" alternative-text="Delete"
+                                           class="slds-m-left_small" title="Delete"></lightning-button-icon>
+                </div>
+            </template>
+        </div>
+        <lightning-button-group class="slds-m-around_medium">
+            <lightning-button label="Save Packages" icon-name="utility:save"
+                              onclick={handleDeliveryPriceChangeAndPrepareToSavePackages}></lightning-button>
+            <lightning-button label="Add new Row" icon-name="utility:add" onclick={addNewRow}></lightning-button>
+        </lightning-button-group>
+    </div>
+</template>
